@@ -22,24 +22,23 @@ def cleanWord(aword):
 def read_input():
     for line in fileinput.input():
         # split the line into words
-        yield line.split()
+        yield line.strip().split()
 
 
 def main(separator='\t'):
     # input comes from STDIN (standard input)
     data = read_input()
-    for words in data:
+    for line in data:
         # write the results to STDOUT (standard output);
         # what we output here will be the input for the
         # Reduce step, i.e. the input for reducer.py
         #
-        # tab-delimited; the trivial word count is 1
-        for word in words:
-            aword = cleanWord(word)
-            if aword is None:
-                continue
-            else:
-                print '%s%s%d' % (aword, separator, 1)
+        word = cleanWord(line[0])
+        if word is None:
+            continue
+        occurrences = int(line[2])
+
+        print '%s%s%d' % (word, separator, occurrences)
 
 
 if __name__ == "__main__":
