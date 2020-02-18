@@ -2,21 +2,6 @@
 """A more advanced Mapper, using Python iterators and generators."""
 
 import sys
-import re
-import fileinput
-
-
-def cleanWord(aword):
-    """
-    Function input: A string which is meant to be
-       interpreted as a single word.
-    Output: a clean, lower-case version of the word
-    """
-    regex = r"[a-zA-Z0-9_]+"
-    matches = bool(re.search(regex, aword, re.MULTILINE))
-    if matches:
-        return None
-    return aword
 
 
 def read_input(__file__):
@@ -25,7 +10,8 @@ def read_input(__file__):
         yield line.strip().split()
 
 
-def main(separator='\t'):
+def main():
+    count = 0
     # input comes from STDIN (standard input)
     data = read_input(sys.stdin)
     for line in data:
@@ -33,12 +19,10 @@ def main(separator='\t'):
         # what we output here will be the input for the
         # Reduce step, i.e. the input for c0_reducer1.py
         #
-        word = cleanWord(line[0])
-        if word is None:
+        if line is None:
             continue
-        occurrences = int(line[2])
-
-        print '%s%s%d' % (word, separator, occurrences)
+        count = count + 1
+    print count
 
 
 if __name__ == "__main__":
