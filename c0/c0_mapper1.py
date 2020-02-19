@@ -33,10 +33,10 @@ def main(separator='\t'):
         # what we output here will be the input for the
         # Reduce step, i.e. the input for c0_reducer1.py
         #
-        word = cleanWord(line[0])
+        word = cleanWord(line[1])
         if word is None:
             continue
-        occurrences = int(line[2])
+        occurrences = int(line[3])
 
         print '%s%s%d' % (word, separator, occurrences)
 
