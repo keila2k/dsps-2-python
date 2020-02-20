@@ -1,0 +1,18 @@
+*******c0: *********
+step 1:
+step type: customer jar
+Name:
+JAR location: command-runner.jar
+arguments: hadoop-streaming -files s3://ngramtest-ori/code/c0_mapper1.py,s3://ngramtest-ori/code/c0_reducer1.py -inputformat SequenceFileInputFormat -mapper "/usr/bin/python c0_mapper1.py" -reducer "/usr/bin/python c0_reducer1.py" -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data -output s3://ngramtest-ori/output_c0
+
+step2:
+step type: customer jar
+Name:
+JAR location: command-runner.jar
+arguments: hadoop-streaming -files s3://ngramtest-ori/code/c0_mapper2.py,s3://ngramtest-ori/code/c0_reducer2.py -mapper "/usr/bin/python c0_mapper2.py" -reducer "/usr/bin/python c0_reducer2.py" -input s3://ngramtest-ori/output_c0/ -output s3://ngramtest-ori/output_c0_final
+
+***** c1n1: ****
+step type: customer jar
+Name:
+JAR location: command-runner.jar
+arguments: hadoop-streaming -files s3://ngramtest-ori/code/c1n1/c1n1_mapper1.py,s3://ngramtest-ori/code/c1n1/c1n1_reducer1.py -inputformat SequenceFileInputFormat -mapper "/usr/bin/python c1n1_mapper1.py סולטן" -reducer "/usr/bin/python c1n1_reducer1.py" -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data -output s3://ngramtest-ori/output_c1n1
