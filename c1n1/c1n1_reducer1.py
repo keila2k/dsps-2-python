@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """A more advanced Reducer, using Python iterators and generators."""
+import fileinput
 from itertools import groupby
 from operator import itemgetter
 import sys
@@ -20,7 +21,7 @@ def main(separator='\t'):
     for current_word, group in groupby(data, itemgetter(0)):
         try:
             total_count = sum(int(count) for current_word, count in group)
-            print "%d" % total_count
+            print "%s%s%d" % (current_word, separator, total_count)
         except ValueError:
             # count was not a number, so silently discard this item
             pass

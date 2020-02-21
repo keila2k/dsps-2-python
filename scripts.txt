@@ -13,14 +13,53 @@ arguments: hadoop-streaming -files s3://ngramtest-ori/code/c0_mapper2.py,s3://ng
 
 **** c1n1: ****
 step type: customer jar
-Name:
+Name: calc c1n1
 JAR location: command-runner.jar
-arguments: hadoop-streaming -files s3://ngramtest-ori/code/c1n1/c1n1_mapper1.py,s3://ngramtest-ori/code/c1n1/c1n1_reducer1.py -inputformat SequenceFileInputFormat -mapper "/usr/bin/python c1n1_mapper1.py סולטן" -reducer "/usr/bin/python c1n1_reducer1.py" -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data -output s3://ngramtest-ori/output_c1n1
+arguments:
+hadoop-streaming
+-files s3://ngramtest-ori/code/c1n1/c1n1_mapper1.py,s3://ngramtest-ori/code/c1n1/c1n1_reducer1.py
+-inputformat SequenceFileInputFormat
+-mapper "/usr/bin/python c1n1_mapper1.py"
+-reducer "/usr/bin/python c1n1_reducer1.py"
+-input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data
+-output s3://ngramtest-ori/output_c1n1
 
 
 **** n3 ****
 step type: customer jar
-Name:
+Name: cacl n3
 JAR location: command-runner.jar
-arguments: hadoop-streaming -files s3://ngramtest-ori/code/n3/n3_mapper.py,s3://ngramtest-ori/code/n3/n3_reducer.py -inputformat SequenceFileInputFormat -mapper "/usr/bin/python n3_mapper.py את המהלומה הראשונה" -reducer "/usr/bin/python n3_reducer.py" -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/3gram/data -output s3://ngramtest-ori/output_n3
+arguments:
+hadoop-streaming
+-files s3://ngramtest-ori/code/n3/n3_mapper.py,s3://ngramtest-ori/code/n3/n3_reducer.py
+-mapper "/usr/bin/python n3_mapper.py"
+-reducer "/usr/bin/python n3_reducer.py"
+-inputformat SequenceFileInputFormat
+-input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/3gram/data
+-output s3://ngramtest-ori/output_n3
 
+
+
+
+
+
+step 1:
+1. calculate c1,n1: input: 1-gram corpus    output: unique <word, numOfOccurences>  (#output1)
+2. calculate c0:    input: #outpu1          output: single number
+3. calculate c2n2:  input: 2-gram corpus    output: unique <word1 word2, numOfOccurences> (#outpu2)
+4. calculate n3:    input: 3-gram corpus    output: unique <word1 word2 word3, numOfOccurences> (#outpu3)
+
+step2:
+join             input:(#output3, #outpu2, #outpu1)     output: <word1 word2 word3, [n3, c1, n1, c2, n2]
+1. join #output3 #outpu2  input: #output3 #outpu2       output: <word1 word2 word3, [n3 (w1 w2 w3 occurrences), n1 (w3 occurrences), c1(w2 occurrences)]
+
+
+
+
+
+
+hadoop-streaming
+-files s3://ngramtest-ori/code/join_n3_n1/mapper2.py
+-D mapred.reduce.tasks=0
+-mapper "/usr/bin/python mapper2.py"
+-input s3://ngramtest-ori/output_join_step1-2

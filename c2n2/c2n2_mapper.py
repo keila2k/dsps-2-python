@@ -1,9 +1,9 @@
+# coding=utf-8
 # !/usr/bin/env python
 """A more advanced Mapper, using Python iterators and generators."""
 
-import sys
 import re
-import fileinput
+import sys
 
 
 def cleanWord(aword):
@@ -29,16 +29,18 @@ def main(separator='\t'):
     # input comes from STDIN (standard input)
     data = read_input(sys.stdin)
     for line in data:
+        if len(line) < 5:
+            continue
         # write the results to STDOUT (standard output);
         # what we output here will be the input for the
         # Reduce step, i.e. the input for c0_reducer1.py
         #
-        word = cleanWord(line[1])
-        if word is None:
+        word1 = cleanWord(line[1])
+        word2 = cleanWord(line[2])
+        if word1 is None or word2 is None:
             continue
-        occurrences = int(line[3])
-
-        print '%s%s%d' % (word, separator, occurrences)
+        occurrences = int(line[4])
+        print '%s %s %s %d' % (word1, word2, separator, occurrences)
 
 
 if __name__ == "__main__":

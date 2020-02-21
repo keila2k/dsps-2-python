@@ -60,11 +60,11 @@ def read_input(__file__):
 
 def main(separator='\t'):
     # input comes from STDIN (standard input)
-    selectedWord1 = sys.argv[1]
-    selectedWord2 = sys.argv[2]
-    selectedWord3 = sys.argv[3]
     data = read_input(sys.stdin)
     for line in data:
+        if len(line) < 6:
+            continue
+
         # write the results to STDOUT (standard output);
         # what we output here will be the input for the
         # Reduce step, i.e. the input for c0_reducer1.py
@@ -72,12 +72,10 @@ def main(separator='\t'):
         word1 = cleanWord(line[1])
         word2 = cleanWord(line[2])
         word3 = cleanWord(line[3])
-        if (word1 and word1 == selectedWord1) and (word2 and word2 == selectedWord2) and (
-                word3 and word3 == selectedWord3):
-            occurrences = int(line[5])
-            print '%s %s %s %s %d' % (word1, word2, word3, separator, occurrences)
-        else:
+        if word1 is None or word2 is None or word3 is None:
             continue
+        occurrences = int(line[5])
+        print '%s %s %s %s %d' % (word1, word2, word3, separator, occurrences)
 
 
 if __name__ == "__main__":

@@ -60,7 +60,6 @@ def read_input(__file__):
 
 def main(separator='\t'):
     # input comes from STDIN (standard input)
-    selectedWord = sys.argv[1]
     data = read_input(sys.stdin)
     for line in data:
         # write the results to STDOUT (standard output);
@@ -68,7 +67,7 @@ def main(separator='\t'):
         # Reduce step, i.e. the input for c0_reducer1.py
         #
         word = cleanWord(line[1])
-        if word is None or word != selectedWord:
+        if word is None:
             continue
         occurrences = int(line[3])
 

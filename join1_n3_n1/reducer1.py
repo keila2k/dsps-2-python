@@ -3,6 +3,7 @@
 from itertools import groupby
 from operator import itemgetter
 import sys
+from ast import literal_eval
 
 
 def read_mapper_output(__file__, separator='\t'):
@@ -19,8 +20,8 @@ def main(separator='\t'):
     #   group - iterator yielding all ["&lt;current_word&gt;", "&lt;count&gt;"] items
     for current_word, group in groupby(data, itemgetter(0)):
         try:
-            total_count = sum(int(count) for current_word, count in group)
-            print "%s%s%d" % (current_word, separator, total_count)
+            total_count = "".join(count for current_word, count in group)
+            print "%s%s%s" % (current_word, separator, total_count)
         except ValueError:
             # count was not a number, so silently discard this item
             pass
