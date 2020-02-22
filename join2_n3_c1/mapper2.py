@@ -31,8 +31,8 @@ def main(separator='\t'):
                     w2_key_index = idx
                     break
             w2_key, w2_value = values.pop(w2_key_index)
-            for key, value in values:
-                print "%s%s%s%s%s" % (key, separator, value, separator, w2_value)
+            for key, value1, value2  in values:
+                print "%s%s%s,%s,%s" % (key, separator, value1, value2, w2_value)
         except Exception:
             pass
 

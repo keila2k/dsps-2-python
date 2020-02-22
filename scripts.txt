@@ -42,24 +42,46 @@ hadoop-streaming
 
 
 
-
-step 1:
+flow:
 1. calculate c1,n1: input: 1-gram corpus    output: unique <word, numOfOccurences>  (#output1)
 2. calculate c0:    input: #outpu1          output: single number
 3. calculate c2n2:  input: 2-gram corpus    output: unique <word1 word2, numOfOccurences> (#outpu2)
 4. calculate n3:    input: 3-gram corpus    output: unique <word1 word2 word3, numOfOccurences> (#outpu3)
 
-step2:
-join             input:(#output3, #outpu2, #outpu1)     output: <word1 word2 word3, [n3, c1, n1, c2, n2]
+step1:
+GOAL : join             input:(#output3, #outpu2, #outpu1)     output: <word1 word2 word3, [n3, c1, n1, c2, n2]
 1. join #output3 #outpu2  input: #output3 #outpu2       output: <word1 word2 word3, [n3 (w1 w2 w3 occurrences), n1 (w3 occurrences), c1(w2 occurrences)]
 
-
-
-
-
-
 hadoop-streaming
--files s3://ngramtest-ori/code/join_n3_n1/mapper2.py
+-files s3://ngramtest-ori/code/join_n3_n1/mapper1.py,s3://ngramtest-ori/code/join_n3_n1/reducer1.py
+-mapper "/usr/bin/python mapper1.py"
+-reducer "/usr/bin/python reducer1.py"
+-input s3://ngramtest-ori/output_c1n1
+-input s3://ngramtest-ori/output_n3
+-output s3://ngramtest-ori/output_join_step1-1
+
+step 2:
+hadoop-streaming
 -D mapred.reduce.tasks=0
+-files s3://ngramtest-ori/code/join_n3_n1/mapper2.py
 -mapper "/usr/bin/python mapper2.py"
+-input s3://ngramtest-ori/output_join_step1-1
+-output s3://ngramtest-ori/output_join_step1-2
+
+step 3:
+hadoop-streaming
+-files s3://ngramtest-ori/code/join2_n3_c1/mapper1.py,s3://ngramtest-ori/code/join2_n3_c1/reducer1.py
+-mapper "/usr/bin/python mapper1.py"
+-reducer "/usr/bin/python reducer1.py"
+-input s3://ngramtest-ori/output_c1n1
 -input s3://ngramtest-ori/output_join_step1-2
+-output s3://ngramtest-ori/output_join2_step1-1
+
+step 4:
+hadoop-streaming
+-D mapred.reduce.tasks=0
+-files s3://ngramtest-ori/code/join2_n3_c1/mapper2.py
+-mapper "/usr/bin/python mapper2.py"
+-input s3://ngramtest-ori/output_join2_step1-1
+-output s3://ngramtest-ori/output_join2_step1-2
+
