@@ -62,10 +62,6 @@ def main(separator='\t'):
     # input comes from STDIN (standard input)
     data = read_input(sys.stdin)
     for line in data:
-        # write the results to STDOUT (standard output);
-        # what we output here will be the input for the
-        # Reduce step, i.e. the input for c0_reducer1.py
-        #
         word = cleanWord(line[1])
         if word is None:
             continue

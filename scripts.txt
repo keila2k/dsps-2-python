@@ -3,7 +3,12 @@ step 1:
 step type: customer jar
 Name:
 JAR location: command-runner.jar
-arguments: hadoop-streaming -files s3://ngramtest-ori/code/c0_mapper1.py,s3://ngramtest-ori/code/c0_reducer1.py -inputformat SequenceFileInputFormat -mapper "/usr/bin/python c0_mapper1.py" -reducer "/usr/bin/python c0_reducer1.py" -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data -output s3://ngramtest-ori/output_c0
+arguments: hadoop-streaming
+-files s3://ngramtest-ori/code/c0/mapper.py,s3://ngramtest-ori/code/c0/reducer.py
+-mapper "/usr/bin/python mapper.py"
+-reducer "/usr/bin/python reducer.py"
+-input s3://ngramtest-ori/output_c1n1
+-output s3://ngramtest-ori/output_c0
 
 step2:
 step type: customer jar
@@ -23,6 +28,15 @@ hadoop-streaming
 -reducer "/usr/bin/python c1n1_reducer1.py"
 -input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data
 -output s3://ngramtest-ori/output_c1n1
+
+*** c2n2 ***
+hadoop-streaming
+-files s3://ngramtest-ori/code/c2n2/mapper.py,s3://ngramtest-ori/code/c2n2/reducer.py
+-inputformat SequenceFileInputFormat
+-mapper "/usr/bin/python mapper.py"
+-reducer /usr/bin/pythonreducer.py
+-input s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data
+-output s3://ngramtest-ori/output_c2n2
 
 
 **** n3 ****
@@ -49,7 +63,7 @@ flow:
 4. calculate n3:    input: 3-gram corpus    output: unique <word1 word2 word3, numOfOccurences> (#outpu3)
 
 step1:
-GOAL : join             input:(#output3, #outpu2, #outpu1)     output: <word1 word2 word3, [n3, c1, n1, c2, n2]
+GOAL : join             input:(#output3, #outpu2, #outpu1)     output: <word1 word2 word3, [n3, n1, c1, n2, c2]
 1. join #output3 #outpu2  input: #output3 #outpu2       output: <word1 word2 word3, [n3 (w1 w2 w3 occurrences), n1 (w3 occurrences), c1(w2 occurrences)]
 
 hadoop-streaming
@@ -84,4 +98,24 @@ hadoop-streaming
 -mapper "/usr/bin/python mapper2.py"
 -input s3://ngramtest-ori/output_join2_step1-1
 -output s3://ngramtest-ori/output_join2_step1-2
+
+
+step 5:
+hadoop-streaming
+-files s3://ngramtest-ori/code/join3_c2/mapper1.py,s3://ngramtest-ori/code/join3_c2/reducer1.py
+-mapper "/usr/bin/python mapper1.py"
+-reducer "/usr/bin/python reducer1.py"
+-input s3://ngramtest-ori/output_c2n2
+-input s3://ngramtest-ori/output_join2_step1-2
+-output s3://ngramtest-ori/output_join3_step1-1
+
+step 6:
+hadoop-streaming
+-D mapred.reduce.tasks=0
+-files s3://ngramtest-ori/code/join3_c2/mapper2.py
+-mapper "/usr/bin/python mapper2.py"
+-input s3://ngramtest-ori/output_join3_step1-1
+-output s3://ngramtest-ori/output_join3_step1-2
+
+
 
